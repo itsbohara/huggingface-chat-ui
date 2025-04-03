@@ -1,0 +1,36 @@
+@tailwind utilities;
+
+@layer utilities {
+	[data-message-role="assistant"] {
+		h3 {
+			@apply !mt-[1rem];
+		}
+
+		p {
+			@apply !my-[0.5em] !text-base/[1.6];
+		}
+
+		ul,
+		ol {
+			@apply !my-1 !text-base/[1.6];
+		}
+
+		details p {
+			@apply !m-0 !text-sm/[1.6];
+		}
+	}
+
+	[data-message-type="user"] {
+		p {
+			@apply !text-base/[1.6];
+		}
+	}
+
+	[data-message-role="assistant"],
+	[data-message-role="user"] {
+		hr {
+			margin-top: 2em !important;
+			margin-bottom: 2em !important;
+		}
+	}
+}
