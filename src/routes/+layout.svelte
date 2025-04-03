@@ -1,5 +1,6 @@
 <script lang="ts">
 	import "../styles/main.css";
+	import "../styles/chat-theme.css";
 
 	import { onDestroy, onMount, untrack } from "svelte";
 	import { goto } from "$app/navigation";
@@ -170,6 +171,23 @@
 			envPublic.PUBLIC_APP_DISCLAIMER === "1" &&
 			!($page.data.shared === true)
 	);
+
+	function handleGlobalKeydown(event: KeyboardEvent) {
+		if (event.ctrlKey || event.metaKey) {
+			// Toggle sidebar on Ctrl + S
+			if (event.key === "S" || event.key === "s") {
+				event.preventDefault();
+				isNavCollapsed = !isNavCollapsed;
+			}
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener("keydown", handleGlobalKeydown);
+		return () => {
+			window.removeEventListener("keydown", handleGlobalKeydown);
+		};
+	});
 </script>
 
 <svelte:head>

@@ -151,7 +151,7 @@
 			/>
 		{/if}
 		<div
-			class="relative min-h-[calc(2rem+theme(spacing[3.5])*2)] min-w-[60px] break-words rounded-2xl border border-gray-100 bg-gradient-to-br from-gray-50 px-5 py-3.5 text-gray-600 prose-pre:my-2 dark:border-gray-800 dark:from-gray-800/40 dark:text-gray-300"
+			class="relative min-h-[calc(2rem+theme(spacing[3.5])*2)] min-w-[60px] break-words px-2 py-3 text-gray-600 prose-pre:my-2 dark:border-gray-800 dark:from-gray-800/40 dark:text-gray-300"
 		>
 			{#if message.files?.length}
 				<div class="flex h-fit flex-wrap gap-x-5 gap-y-2">
@@ -281,76 +281,95 @@
 {/if}
 {#if message.from === "user"}
 	<div
-		class="group relative w-full items-start justify-start gap-4 max-sm:text-sm"
+		class="user-message group relative flex w-full items-end justify-end gap-4 max-sm:text-sm"
 		data-message-id={message.id}
 		data-message-type="user"
 		role="presentation"
 		onclick={() => (isTapped = !isTapped)}
 		onkeydown={() => (isTapped = !isTapped)}
 	>
-		<div class="flex w-full flex-col gap-2">
-			{#if message.files?.length}
-				<div class="flex w-fit gap-4 px-5">
-					{#each message.files as file}
-						<UploadedFile {file} canClose={false} />
-					{/each}
-				</div>
-			{/if}
-
-			<div class="flex w-full flex-row flex-nowrap">
-				{#if !editMode}
-					<p
-						class="disabled w-full appearance-none whitespace-break-spaces text-wrap break-words bg-inherit px-5 py-3.5 text-gray-500 dark:text-gray-400"
-					>
-						{message.content.trim()}
-					</p>
-				{:else}
-					<form
-						class="flex w-full flex-col"
-						bind:this={editFormEl}
-						onsubmit={(e) => {
-							e.preventDefault();
-							dispatch("retry", { content: editContentEl?.value, id: message.id });
-							editMsdgId = null;
-						}}
-					>
-						<textarea
-							class="w-full whitespace-break-spaces break-words rounded-xl bg-gray-100 px-5 py-3.5 text-gray-500 *:h-max dark:bg-gray-800 dark:text-gray-400"
-							rows="5"
-							bind:this={editContentEl}
-							value={message.content.trim()}
-							onkeydown={handleKeyDown}
-							required
-						></textarea>
-						<div class="flex w-full flex-row flex-nowrap items-center justify-center gap-2 pt-2">
-							<button
-								type="submit"
-								class="btn rounded-lg px-3 py-1.5 text-sm
-                                {loading
-									? 'bg-gray-300 text-gray-400 dark:bg-gray-700 dark:text-gray-600'
-									: 'bg-gray-200 text-gray-600 hover:text-gray-800   focus:ring-0 dark:bg-gray-800 dark:text-gray-300 dark:hover:text-gray-200'}
-								"
-								disabled={loading}
-							>
-								Submit
-							</button>
-							<button
-								type="button"
-								class="btn rounded-sm p-2 text-sm text-gray-400 hover:text-gray-500 focus:ring-0 dark:text-gray-400 dark:hover:text-gray-300"
-								onclick={() => {
-									editMsdgId = null;
-								}}
-							>
-								Cancel
-							</button>
-						</div>
-					</form>
+		<div class="flex max-w-[96%] flex-col items-end gap-1" class:w-full={editMode}>
+			<div
+				class="dark:text-gray-30 flex w-full flex-col gap-2 rounded-xl border border-gray-100 bg-gradient-to-br from-gray-50 px-3 dark:border-gray-800 dark:from-gray-800/40 dark:from-gray-800/40"
+				class:border-none={editMode}
+			>
+				{#if message.files?.length}
+					<div class="flex w-fit gap-4 px-5">
+						{#each message.files as file}
+							<UploadedFile {file} canClose={false} />
+						{/each}
+					</div>
 				{/if}
+
+				<div class="flex w-full flex-row flex-nowrap">
+					{#if !editMode}
+						<div class="w-full">
+							<!-- <p
+								class="disabled w-full appearance-none whitespace-break-spaces text-wrap break-words bg-inherit px-5 py-3.5 text-gray-500 dark:text-gray-400"
+							>
+								{message.content.trim()}
+							</p> -->
+
+							<div
+								class="prose max-w-none px-2 py-3 dark:prose-invert max-sm:prose-sm prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-base prose-pre:bg-gray-800 dark:prose-pre:bg-gray-900"
+							>
+								<MarkdownRenderer content={message.content.trim()} />
+							</div>
+						</div>
+					{:else}
+						<form
+							class="flex w-full flex-col"
+							bind:this={editFormEl}
+							onsubmit={(e) => {
+								e.preventDefault();
+								dispatch("retry", { content: editContentEl?.value, id: message.id });
+								editMsdgId = null;
+							}}
+						>
+							<textarea
+								class="w-full whitespace-break-spaces break-words rounded-xl bg-gray-100 px-5 py-3.5 text-gray-500 *:h-max dark:bg-gray-800 dark:text-gray-400"
+								rows="5"
+								bind:this={editContentEl}
+								value={message.content.trim()}
+								onkeydown={handleKeyDown}
+								required
+							></textarea>
+							<div class="flex w-full flex-row flex-nowrap items-center justify-center gap-2 pt-2">
+								<button
+									type="submit"
+									class="btn rounded-lg px-3 py-1.5 text-sm
+                                {loading
+										? 'bg-gray-300 text-gray-400 dark:bg-gray-700 dark:text-gray-600'
+										: 'bg-gray-200 text-gray-600 hover:text-gray-800   focus:ring-0 dark:bg-gray-800 dark:text-gray-300 dark:hover:text-gray-200'}
+								"
+									disabled={loading}
+								>
+									Submit
+								</button>
+								<button
+									type="button"
+									class="btn rounded-sm p-2 text-sm text-gray-400 hover:text-gray-500 focus:ring-0 dark:text-gray-400 dark:hover:text-gray-300"
+									onclick={() => {
+										editMsdgId = null;
+									}}
+								>
+									Cancel
+								</button>
+							</div>
+						</form>
+					{/if}
+				</div>
+				{#if alternatives.length > 1 && editMsdgId === null}
+					<Alternatives {message} {alternatives} {loading} on:showAlternateMsg />
+				{/if}
+			</div>
+
+			<div class="h-2">
 				{#if !loading && !editMode}
 					<div
 						class="
-                        max-md:opacity-0' invisible absolute
-                        right-0 top-3.5 z-10 h-max max-md:-translate-y-4 max-md:transition-all md:bottom-0 md:group-hover:visible md:group-hover:opacity-100 {isTapped ||
+	max-md:opacity-0' invisible
+	left-0 top-3.5 z-10 h-max max-md:-translate-y-4 max-md:transition-all md:bottom-0 md:group-hover:visible md:group-hover:opacity-100 {isTapped ||
 						isCopied
 							? 'max-md:visible max-md:translate-y-0 max-md:opacity-100'
 							: ''}"
@@ -379,9 +398,6 @@
 					</div>
 				{/if}
 			</div>
-			{#if alternatives.length > 1 && editMsdgId === null}
-				<Alternatives {message} {alternatives} {loading} on:showAlternateMsg />
-			{/if}
 		</div>
 	</div>
 {/if}

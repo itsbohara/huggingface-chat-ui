@@ -381,6 +381,14 @@
 			await writeMessage({ prompt: $pendingMessage.content });
 			$pendingMessage = undefined;
 		}
+
+		// handle new conversation shortcut
+		window.addEventListener("keydown", (event) => {
+			if ((event.ctrlKey || event.metaKey) && event.key === "n") {
+				event.preventDefault();
+				goto("/");
+			}
+		});
 	});
 
 	async function onMessage(event: CustomEvent<string>) {

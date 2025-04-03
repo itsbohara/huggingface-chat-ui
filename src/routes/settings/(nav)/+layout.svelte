@@ -121,6 +121,10 @@
 					class="group flex h-10 w-full flex-none items-center gap-2 px-4 text-sm text-gray-500 hover:bg-gray-100 md:rounded-xl md:px-3
 					{model.id === page.params.model ? '!bg-gray-100 !text-gray-800' : ''}"
 					aria-label="Configure {model.displayName}"
+					ondblclick={() => {
+						goto(`${base}/models/${model.id}`);
+						// goto(previousPage);
+					}}
 				>
 					<div class="mr-auto truncate">{model.displayName}</div>
 
